@@ -113,7 +113,7 @@ export default function CareerPath() {
                     <p className="text-muted text-sm">No internship matches yet. Complete your profile skills to get personalised results.</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {data.matchedInternships.slice(0, 4).map(job => (
+                        {data?.matchedInternships?.slice(0, 4).map(job => (
                             <div key={job._id} className="card hover:border-primary/50 transition-all space-y-3">
                                 <div className="flex items-start justify-between gap-2">
                                     <div>
@@ -167,11 +167,11 @@ export default function CareerPath() {
                     </button>
                 </div>
 
-                {data.matchedScholarships.length === 0 ? (
+                {data?.matchedScholarships?.length === 0 ? (
                     <p className="text-muted text-sm">No scholarships available right now. Check back soon.</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {data.matchedScholarships.slice(0, 4).map(schol => (
+                        {data?.matchedScholarships?.slice(0, 4).map(schol => (
                             <div key={schol._id} className="card hover:border-purple-600/40 transition-all space-y-2">
                                 <div className="flex items-start justify-between gap-2">
                                     <div>
@@ -232,7 +232,7 @@ export default function CareerPath() {
                         <div className="absolute left-[19px] top-6 bottom-0 w-1 bg-gradient-to-b from-amber-200 via-purple-100 to-transparent dark:from-amber-900/30 dark:via-purple-900/20 hidden md:block" />
 
                         <div className="space-y-8 relative pointer-events-auto">
-                            {data.skillGaps.map((gap, idx) => (
+                            {data?.skillGaps?.map((gap, idx) => (
                                 <div key={gap.skill} className="relative pl-0 md:pl-12 group">
                                     {/* Roadmap Dot */}
                                     <div className="absolute left-0 top-1 w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-amber-400 hidden md:flex items-center justify-center z-10 shadow-sm group-hover:scale-110 transition-transform">
@@ -251,9 +251,9 @@ export default function CareerPath() {
                                                 </p>
                                             </div>
 
-                                            {gap.suggestedScholarships.length > 0 && (
+                                            {gap?.suggestedScholarships?.length > 0 && (
                                                 <div className="flex -space-x-2">
-                                                    {gap.suggestedScholarships.map((s, i) => (
+                                                    {gap?.suggestedScholarships?.map((s, i) => (
                                                         <div key={s.id} title={s.title} className={`w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-[10px] font-bold text-purple-600 z-[${10 - i}]`}>
                                                             {s.provider.charAt(0)}
                                                         </div>
@@ -262,11 +262,11 @@ export default function CareerPath() {
                                             )}
                                         </div>
 
-                                        {gap.suggestedScholarships.length > 0 && (
+                                        {gap?.suggestedScholarships?.length > 0 && (
                                             <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                                                 <p className="text-[10px] font-black text-muted uppercase mb-3 tracking-widest">Bridging the gap with scholarships:</p>
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                    {gap.suggestedScholarships.map((s) => (
+                                                    {gap?.suggestedScholarships?.map((s) => (
                                                         <a
                                                             key={s.id}
                                                             href={s.url}

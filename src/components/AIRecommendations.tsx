@@ -111,8 +111,8 @@ export default function AIRecommendations() {
             {data!.opportunities.length === 0 ? (
                 <p className="text-muted text-sm">No strong matches found. Try adding more skills to your profile.</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {data!.opportunities.map(opp => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                    {data?.opportunities?.map(opp => (
                         <div key={opp._id} className="card hover:border-indigo-500/40 transition-all space-y-3">
                             {/* Header */}
                             <div className="flex items-start justify-between gap-2">
