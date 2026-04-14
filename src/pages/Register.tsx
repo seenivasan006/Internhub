@@ -164,7 +164,7 @@ export default function Register() {
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-12">
                 <div className="w-full max-w-lg animate-fade-in-up">
-                    <div className="bg-white/95 backdrop-blur-2xl border border-white/30 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl">
+                    <div className="bg-white/95 backdrop-blur-2xl border border-white/30 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl text-slate-900">
                         <h2 className="text-2xl font-black text-slate-900 mb-8 font-outfit uppercase tracking-widest">
                             {t.title}
                         </h2>
@@ -185,7 +185,7 @@ export default function Register() {
                                             required
                                             value={formData.full_name}
                                             onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                                            className="input-field bg-slate-50/50 border-slate-200"
+                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
                                             placeholder="Jane Doe"
                                         />
                                     </div>
@@ -196,7 +196,7 @@ export default function Register() {
                                             required
                                             value={formData.email}
                                             onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                            className="input-field bg-slate-50/50 border-slate-200"
+                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
                                             placeholder="jane@example.com"
                                         />
                                     </div>
@@ -207,7 +207,7 @@ export default function Register() {
                                             required
                                             value={formData.password}
                                             onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                            className="input-field bg-slate-50/50 border-slate-200"
+                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
                                             placeholder="••••••••"
                                         />
                                     </div>
@@ -226,7 +226,7 @@ export default function Register() {
                                             <input
                                                 type="text"
                                                 required
-                                                className="input-field bg-slate-50/50 border-slate-200"
+                                                className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
                                                 value={formData.securityQuestions[idx].answer}
                                                 onChange={e => {
                                                     const nq = [...formData.securityQuestions];
@@ -248,7 +248,7 @@ export default function Register() {
                                             type="text"
                                             required
                                             maxLength={6}
-                                            className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-2xl py-6 text-center text-4xl font-black tracking-[0.5em] focus:border-primary transition-all outline-none"
+                                            className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-2xl py-6 text-center text-4xl font-black tracking-[0.5em] focus:border-primary transition-all outline-none text-slate-900"
                                             placeholder="000000"
                                             value={otp}
                                             onChange={e => setOtp(e.target.value)}

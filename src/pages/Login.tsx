@@ -252,7 +252,7 @@ export default function Login() {
 
                     {/* Auth Card Container */}
                     <div className="flex justify-center lg:justify-end animate-fade-in-up">
-                        <div className="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-white/30 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)]">
+                        <div className="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-white/30 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] text-slate-900">
                             <h2 className="text-2xl font-black text-slate-900 mb-8 font-outfit">
                                 {requirePasswordGoogle ? "Verify Identity" : t.title}
                             </h2>
@@ -312,7 +312,7 @@ export default function Login() {
                                             required
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
-                                            className="input-field bg-slate-50/50 border-slate-200"
+                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
                                             placeholder="you@email.com"
                                         />
                                     </div>
