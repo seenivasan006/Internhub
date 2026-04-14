@@ -56,8 +56,12 @@ export const calculateComprehensiveScore = (
     opportunity: any
 ): number => {
     // 1. Skill Match (50%)
-    const userSkills = [...(user.skills || []), ...(user.internshipPreferences?.skills || [])].map(s => s.toLowerCase());
-    const jobSkills = (opportunity.skills_required || []).map((s: string) => s.toLowerCase());
+    const userSkills = [...(user.skills || []), ...(user.internshipPreferences?.skills || [])]
+        .filter(s => s && typeof s === 'string')
+        .map(s => s.toLowerCase());
+    const jobSkills = (opportunity.skills_required || [])
+        .filter((s: any) => s && typeof s === 'string')
+        .map((s: string) => s.toLowerCase());
     const jobText = ((opportunity.title || '') + ' ' + (opportunity.description || '') + ' ' + (opportunity.skills_required || []).join(' ')).toLowerCase();
 
     // Semantic Score (TF-IDF) - Max 25 points

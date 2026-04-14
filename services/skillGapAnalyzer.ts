@@ -30,7 +30,9 @@ export const analyzeSkillGaps = async (userId: string): Promise<SkillGap[]> => {
     const userSkills = [
         ...(user.skills || []),
         ...(user.internshipPreferences?.skills || [])
-    ].map(s => s.toLowerCase().trim());
+    ]
+    .filter(s => s && typeof s === 'string')
+    .map(s => s.toLowerCase().trim());
 
     // 2. Fetch open internships
     const internships = await Internship.find({ status: 'open' }).lean();
