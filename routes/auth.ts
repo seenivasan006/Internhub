@@ -174,7 +174,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     res.json({
         message: 'Logged in',
-        redirect: user.onboarding_completed ? '/dashboard' : '/onboarding'
+        redirect: '/dashboard'
     });
 });
 
@@ -250,7 +250,7 @@ router.post('/google', async (req: Request, res: Response) => {
 
         res.json({
             message: 'Logged in successfully',
-            redirect: user.onboarding_completed ? '/dashboard' : '/onboarding'
+            redirect: '/dashboard'
         });
     } catch (err) {
         console.error('Google Auth Error:', err);
@@ -276,7 +276,7 @@ router.post('/google-verify', async (req: Request, res: Response) => {
 
         res.json({
             message: 'Logged in successfully',
-            redirect: user.onboarding_completed ? '/dashboard' : '/onboarding'
+            redirect: '/dashboard'
         });
     } catch (err) {
         console.error('Google Verify Error:', err);
