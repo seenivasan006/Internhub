@@ -318,12 +318,7 @@ export default function Login() {
                                     </div>
 
                                     <div>
-                                        <div className="flex justify-between items-center mb-2">
-                                            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500">{t.password}</label>
-                                            <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">
-                                                {t.forgotPassword}
-                                            </Link>
-                                        </div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.password}</label>
                                         <div className="relative group">
                                             <input
                                                 type={showPassword ? "text" : "password"}

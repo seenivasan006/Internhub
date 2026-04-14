@@ -39,12 +39,7 @@ export default function Register() {
     const [formData, setFormData] = useState({
         full_name: '',
         email: '',
-        password: '',
-        securityQuestions: [
-            { question: 'What is your first school name?', answer: '' },
-            { question: 'What is your favorite food?', answer: '' },
-            { question: 'What is the name of your first pet?', answer: '' }
-        ]
+        password: ''
     });
     const [otp, setOtp] = useState('');
     const [googleCredential, setGoogleCredential] = useState('');
@@ -108,8 +103,7 @@ export default function Register() {
                 body: JSON.stringify({ 
                     credential: googleCredential, 
                     isRegister: true,
-                    password: formData.password,
-                    securityQuestions: formData.securityQuestions
+                    password: formData.password
                 })
             });
             const data = await res.json();
@@ -249,26 +243,6 @@ export default function Register() {
                                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
                                         </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500">Security Questions</label>
-                                        {formData.securityQuestions.map((q, idx) => (
-                                            <div key={idx}>
-                                                <label className="block text-[9px] font-bold text-slate-400 mb-1">{q.question}</label>
-                                                <input
-                                                    type="text"
-                                                    required
-                                                    className="input-field-sm py-3 bg-slate-50/50 border-slate-200 text-slate-900"
-                                                    value={formData.securityQuestions[idx].answer}
-                                                    onChange={e => {
-                                                        const nq = [...formData.securityQuestions];
-                                                        nq[idx].answer = e.target.value;
-                                                        setFormData({...formData, securityQuestions: nq});
-                                                    }}
-                                                />
-                                            </div>
-                                        ))}
                                     </div>
 
                                     <button type="submit" disabled={loading} className="w-full btn-primary py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20">

@@ -71,22 +71,13 @@ router.post('/send-otp', async (req: Request, res: Response) => {
 });
 
 router.post('/verify-register', async (req: Request, res: Response) => {
-    const { email, otp, password, full_name, securityQuestions } = req.body;
-
-    if (!securityQuestions || securityQuestions.length !== 3) {
-        return res.status(400).json({ error: '3 security questions are required' });
-    }
+    const { email, otp, password, full_name } = req.body;
 
     const otpRecord = await OTP.findOne({ email, otp, type: 'register' });
     if (!otpRecord) return res.status(400).json({ error: 'Invalid or expired OTP' });
 
     // Create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Hash security question answers
-    const hashedQuestions = await Promise.all(securityQuestions.map(async (q: any) => ({
-        question: q.question,
-        answer: await bcrypt.hash(q.answer.toLowerCase().trim(), 10)
-    })));
 
     const user = await User.create({
         email,
@@ -94,7 +85,6 @@ router.post('/verify-register', async (req: Request, res: Response) => {
         full_name,
         preferred_language: 'English',
         skills: [],
-        securityQuestions: hashedQuestions,
         onboarding_completed: false
     });
 
@@ -198,7 +188,7 @@ router.post('/google', async (req: Request, res: Response) => {
         const payload = ticket.getPayload();
         if (!payload?.email) throw new Error('No email found');
 
-        const { isRegister, password } = req.body; // isRegister flag and optional password
+        const { isRegister, password } = req.body; // isRegister flag and hybrid fields
 
         let user = await User.findOne({ email: payload.email });
 
@@ -208,8 +198,8 @@ router.post('/google', async (req: Request, res: Response) => {
                 return res.status(400).json({ error: 'User already exists. Please sign in.' });
             }
 
-            // We now REQUIRE a password and security questions during registration
-            if (!password || !securityQuestions || securityQuestions.length !== 3) {
+            // We now REQUIRE only a password during registration (security questions removed per user request)
+            if (!password) {
                 return res.json({ 
                     message: 'Please complete your account setup',
                     requireHybridFields: true,
@@ -218,10 +208,6 @@ router.post('/google', async (req: Request, res: Response) => {
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-            const hashedQuestions = await Promise.all(securityQuestions.map(async (q: any) => ({
-                question: q.question,
-                answer: await bcrypt.hash(q.answer.toLowerCase().trim(), 10)
-            })));
 
             // Create new user if they don't exist
             user = await User.create({
@@ -232,7 +218,6 @@ router.post('/google', async (req: Request, res: Response) => {
                 profile_image: payload.picture,
                 preferred_language: 'English',
                 skills: [],
-                securityQuestions: hashedQuestions,
                 is_verified: true, // Google users are verified by default
                 onboarding_completed: false
             });
