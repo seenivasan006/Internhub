@@ -33,8 +33,8 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Root API Healthcheck
-app.get('/', (req, res) => {
+// Root API Healthcheck (Moved to /api/health to avoid blocking frontend)
+app.get('/api/health', (req, res) => {
     res.send('InternHub Backend API is running!');
 });
 
