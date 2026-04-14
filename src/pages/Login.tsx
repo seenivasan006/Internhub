@@ -276,7 +276,7 @@ export default function Login() {
                                                 required
                                                 value={googlePassword}
                                                 onChange={e => setGooglePassword(e.target.value)}
-                                                className="input-field bg-slate-50/50 border-slate-200 pr-12"
+                                                className="input-field bg-slate-50/50 border-slate-200 text-slate-900 pr-12"
                                                 placeholder="••••••••"
                                             />
                                             <button
@@ -320,7 +320,7 @@ export default function Login() {
                                     <div>
                                         <div className="flex justify-between items-center mb-2">
                                             <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500">{t.password}</label>
-                                            <Link to="/forgot-password" text-xs font-bold text-primary hover:underline>
+                                            <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">
                                                 {t.forgotPassword}
                                             </Link>
                                         </div>
@@ -330,7 +330,7 @@ export default function Login() {
                                                 required
                                                 value={password}
                                                 onChange={e => setPassword(e.target.value)}
-                                                className="input-field bg-slate-50/50 border-slate-200 pr-12"
+                                                className="input-field bg-slate-50/50 border-slate-200 text-slate-900 pr-12"
                                                 placeholder="••••••••"
                                             />
                                             <button
