@@ -1,22 +1,41 @@
 import nodemailer from 'nodemailer';
 
-export const sendEmail = async (to: string, subject: string, html: string) => {
-    const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: false,
+const createTransporter = () => {
+    const isSecure = process.env.SMTP_PORT === '465';
+    
+    return nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: isSecure, // true for 465, false for other ports
         auth: {
             user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            pass: process.env.SMTP_PASS
         },
+        connectionTimeout: 15000, // 15 seconds
+        greetingTimeout: 15000,
+        socketTimeout: 30000,
+        debug: true,
+        logger: true
     });
+};
 
-    const info = await transporter.sendMail({
-        from: process.env.SMTP_FROM || 'noreply@internhub.com',
+export const sendEmail = async (to: string, subject: string, html: string) => {
+    console.log(`📧 Attempting to send custom email to ${to}...`);
+    const transporter = createTransporter();
+
+    const mailOptions = {
+        from: process.env.SMTP_FROM || 'internhub.org@gmail.com',
         to,
         subject,
-        html,
-    });
+        html
+    };
 
-    console.log('📧 Email sent:', info.messageId);
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('✅ Email sent successfully:', info.messageId);
+        return info;
+    } catch (error) {
+        console.error('❌ FAILED to send email:', error);
+        throw error;
+    }
 };
