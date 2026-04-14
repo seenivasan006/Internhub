@@ -169,7 +169,7 @@ export default function Dashboard() {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col">
-                            <h3 className="text-lg font-bold text-text">{t.topInternships}</h3>
+                            <h3 className="text-lg font-bold text-text">{t.topInternships} (v1.1)</h3>
                             {localStorage.getItem('user_location') && (
                                 <span className="text-xs text-primary font-medium flex items-center gap-1 mt-0.5">
                                     <MapPin className="w-3 h-3" /> Matched for {localStorage.getItem('user_location')}
