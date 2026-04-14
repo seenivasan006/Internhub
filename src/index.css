@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+@layer base {
+  :root {
+    --color-primary: 30 58 138;
+    --color-primary-dark: 20 40 100;
+    --color-text: 15 23 42;
+    --color-background: 255 255 255;
+    --color-card: 255 255 255;
+    --color-border: 226 232 240;
+    --color-muted: 100 116 139;
+    --color-accent: 79 70 229;
+    scroll-behavior: smooth;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --color-primary: 96 165 250;
+    /* #60A5FA - Lighter blue for dark mode */
+    --color-accent: 59 130 246;
+    /* #3B82F6 */
+    --color-background: 15 23 42;
+    /* #0F172A - slate 900 */
+    --color-card: 30 41 59;
+    /* #1E293B - slate 800 */
+    --color-text: 241 245 249;
+    /* #F1F5F9 - slate 100 */
+    --color-muted: 148 163 184;
+    /* #94A3B8 - slate 400 */
+    --color-border: 51 65 85;
+    /* #334155 */
+  }
+
+  body {
+    @apply bg-background text-text antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-outfit {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-accent text-white rounded-lg px-4 py-2 transition-colors duration-200 font-medium;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-gray-300 hover:bg-gray-50 text-text rounded-lg px-4 py-2 transition-colors duration-200 font-medium;
+  }
+
+  .card {
+    @apply bg-card rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 p-6;
+  }
+
+  .input-field {
+    @apply w-full bg-card text-text border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm;
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-white/20 dark:border-gray-800/30;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary via-[#1e40af] to-accent;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
