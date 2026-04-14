@@ -62,6 +62,10 @@
     @apply w-full bg-card text-text border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm;
   }
 
+  .input-field-sm {
+    @apply w-full bg-card text-text border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-1.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm text-sm;
+  }
+
   .glass-card {
     @apply bg-card/80 backdrop-blur-md border border-white/20 dark:border-gray-800/30;
   }

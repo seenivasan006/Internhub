@@ -47,6 +47,8 @@ export default function Register() {
         ]
     });
     const [otp, setOtp] = useState('');
+    const [googleCredential, setGoogleCredential] = useState('');
+    const [showHybridForm, setShowHybridForm] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -67,6 +69,13 @@ export default function Register() {
                 body: JSON.stringify({ credential: credentialResponse.credential, isRegister: true })
             });
             const data = await res.json();
+            
+            if (data.requireHybridFields) {
+                setGoogleCredential(credentialResponse.credential);
+                setShowHybridForm(true);
+                return;
+            }
+
             if (!res.ok) throw new Error(data.error || 'Google registration failed');
             
             const meRes = await fetch('/api/auth/me');
@@ -82,6 +91,37 @@ export default function Register() {
             }
         } catch (err: any) {
             console.error('Google Register Error:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleHybridSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    credential: googleCredential, 
+                    isRegister: true,
+                    password: formData.password,
+                    securityQuestions: formData.securityQuestions
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Hybrid signup failed');
+
+            const meRes = await fetch('/api/auth/me');
+            const meData = await meRes.json();
+            if (meData.user) {
+                login({ user: meData.user });
+                navigate(data.redirect || '/onboarding');
+            }
+        } catch (err: any) {
             setError(err.message);
         } finally {
             setLoading(false);
@@ -176,91 +216,164 @@ export default function Register() {
                         )}
 
                         <div className="animate-fade-in-up">
-                            {step === 1 && (
-                                <form className="space-y-6" onSubmit={handleSendOTP}>
-                                    <div>
-                                        <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.fullname}</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={formData.full_name}
-                                            onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
-                                            placeholder="Jane Doe"
-                                        />
+                        <div className="animate-fade-in-up">
+                            {showHybridForm ? (
+                                <form className="space-y-6" onSubmit={handleGoogleHybridSignup}>
+                                    <div className="flex items-center space-x-4 mb-6">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setShowHybridForm(false)}
+                                            className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                                        >
+                                            <ArrowLeft className="w-5 h-5 text-slate-400" />
+                                        </button>
+                                        <h3 className="text-lg font-black font-outfit uppercase tracking-widest text-slate-900">Finish Setup</h3>
                                     </div>
-                                    <div>
-                                        <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.email}</label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={formData.email}
-                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
-                                            placeholder="jane@example.com"
-                                        />
-                                    </div>
+
                                     <div>
                                         <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.password}</label>
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            required
-                                            value={formData.password}
-                                            onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                            className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
-                                            placeholder="••••••••"
-                                        />
-                                    </div>
-                                    <button type="submit" disabled={loading} className="w-full btn-primary py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20">
-                                        {loading ? t.sending : t.sendOtp}
-                                    </button>
-                                </form>
-                            )}
-
-                            {step === 3 && (
-                                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
-                                    <h3 className="text-lg font-black font-outfit uppercase tracking-widest text-slate-900 mb-4">Security Protocol</h3>
-                                    {formData.securityQuestions.map((q, idx) => (
-                                        <div key={idx}>
-                                            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{q.question}</label>
+                                        <div className="relative group">
                                             <input
-                                                type="text"
+                                                type={showPassword ? "text" : "password"}
                                                 required
-                                                className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
-                                                value={formData.securityQuestions[idx].answer}
-                                                onChange={e => {
-                                                    const nq = [...formData.securityQuestions];
-                                                    nq[idx].answer = e.target.value;
-                                                    setFormData({...formData, securityQuestions: nq});
-                                                }}
+                                                value={formData.password}
+                                                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                                className="input-field bg-slate-50/50 border-slate-200 text-slate-900 pr-12"
+                                                placeholder="••••••••"
                                             />
+                                            <button
+                                                type="button"
+                                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 group-hover:text-primary transition-colors"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                            </button>
                                         </div>
-                                    ))}
-                                    <button type="submit" className="w-full btn-primary py-4 font-black uppercase tracking-widest">Verify Identity</button>
-                                </form>
-                            )}
-
-                            {step === 2 && (
-                                <form className="space-y-6" onSubmit={handleVerifyOTP}>
-                                    <div className="text-center">
-                                        <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{t.enterOtp}</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            maxLength={6}
-                                            className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-2xl py-6 text-center text-4xl font-black tracking-[0.5em] focus:border-primary transition-all outline-none text-slate-900"
-                                            placeholder="000000"
-                                            value={otp}
-                                            onChange={e => setOtp(e.target.value)}
-                                        />
                                     </div>
-                                    <button type="submit" disabled={loading} className="w-full btn-primary py-4 font-black uppercase tracking-widest shadow-xl">
-                                        {loading ? t.verifying : t.verify}
+
+                                    <div className="space-y-4">
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500">Security Questions</label>
+                                        {formData.securityQuestions.map((q, idx) => (
+                                            <div key={idx}>
+                                                <label className="block text-[9px] font-bold text-slate-400 mb-1">{q.question}</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    className="input-field-sm py-3 bg-slate-50/50 border-slate-200 text-slate-900"
+                                                    value={formData.securityQuestions[idx].answer}
+                                                    onChange={e => {
+                                                        const nq = [...formData.securityQuestions];
+                                                        nq[idx].answer = e.target.value;
+                                                        setFormData({...formData, securityQuestions: nq});
+                                                    }}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <button type="submit" disabled={loading} className="w-full btn-primary py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                                        {loading ? 'Finalizing...' : 'Complete Registration'}
                                     </button>
                                 </form>
-                            )}
+                            ) : (
+                                <>
+                                    {step === 1 && (
+                                        <form className="space-y-6" onSubmit={handleSendOTP}>
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.fullname}</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={formData.full_name}
+                                                    onChange={e => setFormData({ ...formData, full_name: e.target.value })}
+                                                    className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
+                                                    placeholder="Jane Doe"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.email}</label>
+                                                <input
+                                                    type="email"
+                                                    required
+                                                    value={formData.email}
+                                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                                    className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
+                                                    placeholder="jane@example.com"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{t.password}</label>
+                                                <div className="relative group">
+                                                    <input
+                                                        type={showPassword ? "text" : "password"}
+                                                        required
+                                                        value={formData.password}
+                                                        onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                                        className="input-field bg-slate-50/50 border-slate-200 text-slate-900 pr-12"
+                                                        placeholder="••••••••"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 group-hover:text-primary transition-colors"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                    >
+                                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button type="submit" disabled={loading} className="w-full btn-primary py-4 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                                                {loading ? t.sending : t.sendOtp}
+                                            </button>
+                                        </form>
+                                    )}
 
-                            {step === 1 && (
+                                    {step === 3 && (
+                                        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
+                                            <h3 className="text-lg font-black font-outfit uppercase tracking-widest text-slate-900 mb-4">Security Protocol</h3>
+                                            {formData.securityQuestions.map((q, idx) => (
+                                                <div key={idx}>
+                                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{q.question}</label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        className="input-field bg-slate-50/50 border-slate-200 text-slate-900"
+                                                        value={formData.securityQuestions[idx].answer}
+                                                        onChange={e => {
+                                                            const nq = [...formData.securityQuestions];
+                                                            nq[idx].answer = e.target.value;
+                                                            setFormData({...formData, securityQuestions: nq});
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                            <button type="submit" className="w-full btn-primary py-4 font-black uppercase tracking-widest">Verify Identity</button>
+                                        </form>
+                                    )}
+
+                                    {step === 2 && (
+                                        <form className="space-y-6" onSubmit={handleVerifyOTP}>
+                                            <div className="text-center">
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{t.enterOtp}</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    maxLength={6}
+                                                    className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-2xl py-6 text-center text-4xl font-black tracking-[0.5em] focus:border-primary transition-all outline-none text-slate-900"
+                                                    placeholder="000000"
+                                                    value={otp}
+                                                    onChange={e => setOtp(e.target.value)}
+                                                />
+                                            </div>
+                                            <button type="submit" disabled={loading} className="w-full btn-primary py-4 font-black uppercase tracking-widest shadow-xl">
+                                                {loading ? t.verifying : t.verify}
+                                            </button>
+                                        </form>
+                                    )}
+                                </>
+                            )}
+                        </div>
+
+                            {step === 1 && !showHybridForm && (
                                 <div className="mt-8">
                                     <div className="relative">
                                         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100" /></div>

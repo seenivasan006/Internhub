@@ -198,7 +198,7 @@ router.post('/google', async (req: Request, res: Response) => {
         const payload = ticket.getPayload();
         if (!payload?.email) throw new Error('No email found');
 
-        const { isRegister } = req.body; // isRegister flag
+        const { isRegister, password } = req.body; // isRegister flag and optional password
 
         let user = await User.findOne({ email: payload.email });
 
@@ -208,13 +208,32 @@ router.post('/google', async (req: Request, res: Response) => {
                 return res.status(400).json({ error: 'User already exists. Please sign in.' });
             }
 
+            // We now REQUIRE a password and security questions during registration
+            if (!password || !securityQuestions || securityQuestions.length !== 3) {
+                return res.json({ 
+                    message: 'Please complete your account setup',
+                    requireHybridFields: true,
+                    email: payload.email 
+                });
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedQuestions = await Promise.all(securityQuestions.map(async (q: any) => ({
+                question: q.question,
+                answer: await bcrypt.hash(q.answer.toLowerCase().trim(), 10)
+            })));
+
             // Create new user if they don't exist
             user = await User.create({
                 email: payload.email,
                 full_name: payload.name || 'Google User',
+                password: hashedPassword,
                 googleId: payload.sub,
+                profile_image: payload.picture,
                 preferred_language: 'English',
                 skills: [],
+                securityQuestions: hashedQuestions,
+                is_verified: true, // Google users are verified by default
                 onboarding_completed: false
             });
         }
