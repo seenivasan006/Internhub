@@ -89,19 +89,28 @@ export default function Dashboard() {
             ]);
 
             const allInts = intData?.internships || [];
-            const allSchols = (scholData?.scholarships || []).filter((s: any) => !s.title.toLowerCase().startsWith('top scholarships'));
+            const allSchols = (scholData?.scholarships || []).filter((s: any) => s && s.title && !s.title.toLowerCase().startsWith('top scholarships'));
             if (tipsData) setProfileTips(tipsData.tips || []);
 
             // Sort by match score for recommendation section
-            const recommendedInts = [...allInts].sort((a, b) => (b.match_score || 0) - (a.match_score || 0)).slice(0, 4);
-            const recommendedSchols = [...allSchols].sort((a, b) => (b.match_score || 0) - (a.match_score || 0)).slice(0, 4);
+            const recommendedInts = [...allInts]
+                .filter(job => job)
+                .sort((a, b) => (b.match_score || 0) - (a.match_score || 0))
+                .slice(0, 4);
+
+            const recommendedSchols = [...allSchols]
+                .filter(schol => schol)
+                .sort((a, b) => (b.match_score || 0) - (a.match_score || 0))
+                .slice(0, 4);
 
             // Sort by creation date for recent section
-            const recentInts = [...allInts].sort((a, b) => {
-                const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-                const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-                return dateB - dateA;
-            }).slice(0, 4);
+            const recentInts = [...allInts]
+                .filter(job => job)
+                .sort((a, b) => {
+                    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+                    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+                    return dateB - dateA;
+                }).slice(0, 4);
 
             setInternships(recommendedInts);
             setScholarships(recommendedSchols);
