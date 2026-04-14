@@ -167,16 +167,17 @@ router.post('/login', async (req: Request, res: Response) => {
     setCookie(res, token);
 
     try {
-        await sendEmail(
-            user.email,
-            'Login Alert - InternHub',
-            `
-              <h2>Login Successful</h2>
-              <p>Hello ${user.full_name || user.email},</p>
-              <p>You have successfully logged into InternHub.</p>
-              <p>If this was not you, please reset your password immediately.</p>
-            `
-        );
+    // Send Login Alert in background (don't block the response)
+    sendEmail(
+        user.email,
+        'Login Alert - InternHub',
+        `
+          <h2>Login Successful</h2>
+          <p>Hello ${user.full_name || user.email},</p>
+          <p>You have successfully logged into InternHub.</p>
+          <p>If this was not you, please reset your password immediately.</p>
+        `
+    ).catch(err => console.error('Failed to send login alert email:', err));
     } catch (err) {
         console.error('Failed to send login alert email:', err);
     }
